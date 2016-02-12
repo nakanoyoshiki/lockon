@@ -1,19 +1,41 @@
 <?php
-  session_start();
-  require('dbconnect.php');
+session_start();
+$link = mysql_connect('localhost', 'root', 'root');
+if(!$link){
+	die('データベースに接続できません');
+}
+mysql_select_db('mini_bbs' ,$link);
+//require('dbconnect.php');
 
-  if(!empty($_POST)){
-    if($_POST['message'] != ''){
-      $sql = sprintf('INSERT INTO posts SET message="%s"',
-        mysqli_real_escape_string($db, $_POST['message'])
-      );
-      mysqli_query($db, $sql) or die(mysqli_error($db));
-      header('Location: index.php');
-      exit();
-    }
-  }
-//  $sql = sprintf('SELECT p.* FROM posts p');
-//  $posts = mysql_query($db, $sql) or die(mysql_error($db));
+$errors = array();
+if($_SERVER['REQUEST_METHOD']== 'POST'){
+	$name = null;
+	if(!isset($_POST['name']) || !strlen($_POST['name'])){
+		$errors['name']= '名前を入力して下さい';
+	}elseif (strlen($_POST['name']) > 15) {
+		$errors['name'] = '名前は15文字以内で入力してください';
+	}else {
+		$name = $_POST['name'];
+	}
+
+
+	$message = null;
+	if(!isset($_POST['message']) || !strlen($_POST['message'])){
+		$errors['message']= 'messageを入力して下さい';
+	}elseif (strlen($_POST['message']) > 15) {
+		$errors['message'] = 'messageは140文字以内で入力してください';
+	}else{
+		$message = $_POST['message'];
+	}
+	if(count($errors) ===0){
+		$sql = sprintf("INSERT INTO posts SET name='%s' , message='%s'",
+			mysql_real_escape_string($name),
+		  mysql_real_escape_string($message)
+		);
+	}
+	
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -21,73 +43,73 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Bootstrap 101 Template</title>
-
-    <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
   </head>
   <body>
-			<nav class="navbar navbar-default">
-				<div class="container-fluid">
-					<!-- Brand and toggle get grouped for better mobile display -->
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-							<span class="sr-only">Toggle navigation</span>
-	      			<span class="icon-bar"></span>
-	        		<span class="icon-bar"></span>
-	        		<span class="icon-bar"></span>
-	      		</button>
-						<a class="navbar-brand" href="#">Brand</a>
-	    		</div>
-
-	    	<!-- Collect the nav links, forms, and other content for toggling -->
-	    		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	      		<ul class="nav navbar-nav">
-	        		<li><a href="#">Link</a></li>
-	      		</ul>
-	      		<ul class="nav navbar-nav ">
-	        		<li><a href="#">Link</a></li>
-	      		</ul>
-	    		</div><!-- /.navbar-collapse -->
-	  		</div><!-- /.container-fluid -->
-			</nav>
-			<div class="page-header">
-	  		<h1>掲示板 <small>Subtext for header</small></h1>
+		<div class="page-header">
+	  	<h1>掲示板 <small>Subtext for header</small></h1>
+		</div>
+		<form class="form-horizontal" id="frmInput" action="index.php" method="post" enctype="multipart/form-data">
+			<div class="form-group">
+				<div class="col-sm-8 col-sm-offset-2">
+					<?php if (count($errors) > 0): ?>
+						<ul>
+							<?php foreach ($errors as $error): ?>
+								<li>
+									<?php echo htmlentities($error , ENT_QUOTES,'UTF-8'); ?>
+								</li>
+							<?php  endforeach; ?>
+						</ul>
+					<?php endif ?>
+          <input type="text" row="5" name="name" class="form-control" id="name">
+          <br>
+					<textarea type="text" rows="5" name="message" class="form-control" id="message" placeholder="メッセージをどうぞ"></textarea>
+				</div>
 			</div>
-			<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
-				<div class="form-group">
+	  	<div class="form-group">
+	    	<div class="col-sm-offset-2 col-sm-8">
+	      	<input type="submit" value="投稿" class="btn btn-primary">
+	    	</div>
+	  	</div>
+		</form>
+		<div class="col-sm-offset-2 col-sm-8">
+			<div class="panel panel-primary">
+  			<div class="panel-heading">
+    			<h3 class="panel-title">
+            <?php  print htmlspecialchars($name);?>
 
-						<div class="col-sm-8 col-sm-offset-2">
-							<textarea type="text" rows="5" name="message" class="form-control " id="inputPassword3" placeholder="メッセージをどうぞ"></textarea>
-						</div>
-				</div>
-	  		<div class="form-group">
-	    		<div class="col-sm-offset-2 col-sm-8">
-	      		<input type="submit" value="投稿" class="btn btn-primary">
-	    		</div>
-	  		</div>
-			</form>
-
-
-			<div class="col-sm-offset-2 col-sm-8">
-				<div class="panel panel-primary">
-  				<div class="panel-heading">
-    				<h3 class="panel-title">Panel title</h3>
-  				</div>
-  				<div class="panel-body">
- <!--		<p><?php echo htmlspecialchars($posts['message'], ENT_QUOTES, 'UTF-8'); ?></p> -->
-  				</div>
-				</div>
+          </h3>
+  			</div>
+  			<div class="panel-body">
+          <?php print htmlspecialchars($message);?>
+  			</div>
 			</div>
 		</div>
+		<br>
+<?php
+    $result = mysql_query('SELECT * FROM posts ORDER BY id DESC');
+
+    ?>
+
+    <?php if($result !== false && mysql_num_rows($result)) :?>
+			<?php while($post = mysql_fetch_assoc($result)): ?>
+		<div class="col-sm-offset-2 col-sm-8">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<?php  print htmlspecialchars($post['name']);?>
+						</h3>
+					</div>
+					<div class="panel-body">
+						<?php print htmlspecialchars($post['message']);?>
+					</div>
+				</div>
+			</div>
+        <?php endwhile; ?>
+    <?php endif;?>
+
+	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

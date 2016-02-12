@@ -1,3 +1,11 @@
+<?php
+session_start();
+require('dbconnect.php');
+$recortlist = mysqli_query("SELECT * FROM 'posts' ORDER BY 'id' DESC");
+$result = mysql_query($recortlist , $db_selected);
+// $data = mysqli_fetch_assoc($recortlist);
+// echo $data['message'];
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,10 +27,40 @@
   </head>
   <body>
     <h1>Hello, world!</h1>
+    <?php $sql = "SELECT * FROM 'posts' ORDER BY 'created' DESC";
+    $result = mysql_query($sql, $db_selected);
+    ?>
+    <?php if($result !== false && mysql_num_rows($result)) :?>
+      <ul>
+        <?php while($post = mysql_fetch_assoc($result)): ?>
+          <li>
+            <?php echo htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8');?>
+          </li>
+        <?php endwhile; ?>
+      </ul>
+    <?php endif;?>
 
+  <!-- <?php if ($result !== false && mysql_num_rows($result)): ?>
+    <ul>
+      <?php while($post = mysqli_fetch_assoc($rresult)): ?>
+        <li>
+          <?php echo htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8'); ?>
+        </li>
+      <?php endwhile;?>
+    </ul>
+  <?php endif?> -->
+
+
+<?php
+
+    print htmlspecialchars($_POST["name"]);
+
+
+    print htmlspecialchars($_POST["message"]);
+    ?>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
   </body>
-</html>
+  </html>
