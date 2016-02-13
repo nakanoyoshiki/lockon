@@ -4,9 +4,25 @@ $link = mysql_connect('localhost', 'root', 'root');
 if(!$link){
 	die('データベースに接続できません');
 }
-mysql_select_db('mini_bbs' ,$link);
+$db =mysql_select_db('mini_bbs' ,$link);
 
 //require('dbconnect.php');
+// $id = $_REQUEST['id'];
+// $sql = mysql_query("SELECT * FROM posts WHERE id=%d",
+//   mysql_real_escape_string($db,$id)
+// );
+// $post = mysql_fetch_assoc($sql);
+
+$id = $_REQUEST['id'];
+echo $id;
+//$id = mysqli_real_escape_string($link, $id);
+$result = sprintf("SELECT * FROM posts WHERE id='%d'",
+  mysql_real_escape_string($id)
+);
+//  $result = mysql_query('SELECT * FROM posts WHERE id=231'
+// );
+ $post = mysql_fetch_assoc($result);
+
 
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
@@ -63,50 +79,22 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 							<?php  endforeach; ?>
 						</ul>
 					<?php endif ?>
-          <input type="text" row="5" name="name" class="form-control" id="name">
+          <small><?php  print htmlspecialchars($post['id'], ENT_QUOTES,'UTF-8');?></small>
+          <input type="text" row="5" name="name" class="form-control" id="name" value="<?php printf(htmlspecialchars($post['name'], ENT_QUOTES));?>">
           <br>
-					<textarea type="text" rows="5" name="message" class="form-control" id="message" placeholder="メッセージをどうぞ"></textarea>
+					<input type="text" rows="5" name="message" class="form-control" id="message" value="<?php printf(htmlspecialchars($post['message'], ENT_QUOTES));?>">
 				</div>
 			</div>
 	  	<div class="form-group">
 	    	<div class="col-sm-offset-2 col-sm-8">
-	      	<input type="submit" value="投稿" class="btn btn-primary">
+	      	<input type="submit" value="変更" class="btn btn-primary">
+          <input type="hidden" name='id' value="<?php printf(htmlspecialchars['id'], ENT_QUOTES);?>"/>
 	    	</div>
 	  	</div>
 		</form>
 
 		<br>
-<?php
-    $result = mysql_query('SELECT * FROM posts ORDER BY id DESC');
-		if($result !== false && mysql_num_rows($result)) :
-		 while($post = mysql_fetch_assoc($result)): ?>
-		<div class="col-sm-offset-2 col-sm-8">
-			<small><?php  print htmlspecialchars($post['id'], ENT_QUOTES,'UTF-8');?></small>
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">
 
-						<?php  print htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8');
-					?>
-						<small class="pull-right"><?php  print htmlspecialchars($post['created'], ENT_QUOTES,'UTF-8');?></small>
-
-
-
-
-							</h3>
-					</div>
-					<div class="panel-body">
-						<button type="button" class="btn btn-danger btn-xs pull-right">
-							<a href="delete.php?id=<?php print htmlspecialchars($post['id']);?>" onclick="return confirm('削除していいですか？');">削除</a></button>
-						<button type="button" class="btn btn-warning btn-xs pull-right">
-							<a href="update.php?id=<?php print htmlspecialchars($post['id']);?>">編集</a></button>
-
-						<?php print htmlspecialchars($post['message'], ENT_QUOTES,'UTF-8');?>
-					</div>
-				</div>
-			</div>
-        <?php endwhile; ?>
-    <?php endif;?>
 
 	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
