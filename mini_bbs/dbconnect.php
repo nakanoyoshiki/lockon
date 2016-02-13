@@ -1,16 +1,7 @@
 <?php
-  $user = 'root';
-  $password = 'root';
-  $db = 'mini_bbs';
-  $socket = 'localhost:/Applications/MAMP/tmp/mysql/mysql.sock';
-
-  $link = mysql_connect(
-    $socket,
-    $user,
-    $password
-  );
-  $db_selected = mysql_select_db(
-    $db,
-    $link
-  );
+$link = mysql_connect('localhost', 'root', 'root');
+if(!$link){
+	die('データベースに接続できません');
+}
+mysql_select_db('mini_bbs' ,$link);
 ?>

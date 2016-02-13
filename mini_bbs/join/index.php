@@ -1,6 +1,7 @@
 <?php
 session_start();
 require('../dbconnect.php');
+
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
 	$name = null;
@@ -18,25 +19,21 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     $email = $_POST['email'];
   }
   $password = null;
-  if(!isset($_POST['password']) || !strlen($_POST['password'])){
-   $errors['password'] ='パスワードを入力してください';
-  }elseif (strlen($_POST['password']) > 1) {
-    $errors['password'] ='5文字以上入力してください';
-  } else {
-    $password = $_POST['password'];
-  }
-	// if(count($errors) ===0){
-  //   $_SESSION['join'] = $_POST;
-  //   header('Location: check.php');
-  //   exit();
-//	}
-	
+ //  if(!isset($_POST['password']) || !strlen($_POST['password'])){
+ //   $errors['password'] ='パスワードを入力してください';
+ // }elseif (strlen($_POST['password']) < 5) {
+ //    $errors['password'] ='5文字以上入力してください';
+ //  } else {
+ //    $password = $_POST['password'];
+ //  }
+	 if(count($errors) ===0){
+     $_SESSION['join'] = $_POST;
+     header('Location: check.php');
+     exit();
 }
-  //
- // 	if($_REQUEST['action'] == 'rewrite'){
-	// 	$_POST = $_SESSION['join'];
-	// 	$error =['rewrite'] == true;
-	// }
+
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -48,30 +45,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     <link href="../css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
-		<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <!-- <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Brand</a>
-    </div> -->
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <!-- <ul class="nav navbar-nav">
-        <li><a href="#">Link</a></li>
-      </ul>
-      <ul class="nav navbar-nav ">
-        <li><a href="#">Link</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav> -->
 		<div class="page-header">
   		<h1>会員登録 <small>Subtext for header</small></h1>
 
@@ -85,7 +59,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
         <?php  endforeach; ?>
       </ul>
     <?php endif ?>
-		<form class="form-horizontal" action="check.php" method="post" enctype="multipart/form-data">
+		<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
 			<div class="form-group">
 				<label for="inputPassword3" class="col-sm-2 control-label">名前</label>
 					<div class="col-sm-8">

@@ -1,12 +1,6 @@
 <?php
 session_start();
-$link = mysql_connect('localhost', 'root', 'root');
-if(!$link){
-	die('データベースに接続できません');
-}
-mysql_select_db('mini_bbs' ,$link);
-
-//require('dbconnect.php');
+require('dbconnect.php');
 
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
