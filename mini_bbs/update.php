@@ -1,17 +1,7 @@
 <?php
 session_start();
-$link = mysql_connect('localhost', 'root', 'root');
-if(!$link){
-	die('データベースに接続できません');
-}
-$db =mysql_select_db('mini_bbs' ,$link);
+require('dbconnect.php');
 
-//require('dbconnect.php');
-// $id = $_REQUEST['id'];
-// $sql = mysql_query("SELECT * FROM posts WHERE id=%d",
-//   mysql_real_escape_string($db,$id)
-// );
-// $post = mysql_fetch_assoc($sql);
 
 $id = $_REQUEST['id'];
 echo $id;
@@ -19,8 +9,7 @@ echo $id;
 $result = sprintf("SELECT * FROM posts WHERE id='%d'",
   mysql_real_escape_string($id)
 );
-//  $result = mysql_query('SELECT * FROM posts WHERE id=231'
-// );
+
  $post = mysql_fetch_assoc($result);
 
 
@@ -88,7 +77,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	  	<div class="form-group">
 	    	<div class="col-sm-offset-2 col-sm-8">
 	      	<input type="submit" value="変更" class="btn btn-primary">
-          <input type="hidden" name='id' value="<?php printf(htmlspecialchars['id'], ENT_QUOTES);?>"/>
+          <!-- <input type="hidden" name='id' value="<?php printf(htmlspecialchars['id'], ENT_QUOTES);?>"/> -->
 	    	</div>
 	  	</div>
 		</form>

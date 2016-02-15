@@ -1,12 +1,15 @@
 <?php
 session_start();
-$link = mysql_connect('localhost', 'root', 'root');
-if(!$link){
-	die('データベースに接続できません');
-}
-$db =mysql_select_db('mini_bbs' ,$link);
+require('dbconnect.php');
+
 $id = $_REQUEST['id'];
 echo $id;
+
+$sql = 'DELETE FROM posts where id = :delete_id';
+$stmt = $pdo -> prepare($sql);
+$stmt -> bindValue(':delete_id', $value, PDO::PARAM_INT);
+$stmt -> execute();
+
 //$id = mysqli_real_escape_string($link, $id);
  $result = mysql_query('DELETE FROM posts WHERE id=238');
 ?>
@@ -23,7 +26,7 @@ echo $id;
 		<div class="page-header">
 	  	<h1>掲示板 <small>Subtext for header</small></h1>
       <p> 削除しました</p>
-      <p><a href ="index.php">一覧に戻る</a></p> 
+      <p><a href ="index.php">一覧に戻る</a></p>
 		</div>
 	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

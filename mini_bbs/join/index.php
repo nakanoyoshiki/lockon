@@ -1,5 +1,4 @@
 <?php
-
 require('../dbconnect.php');
 session_start();
 
@@ -13,33 +12,25 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	}else {
 		$name = $_POST['name'];
 	}
-
-	$result = mysql_query('SELECT * FROM members ORDER BY id DESC');
+	$stmt = $pdo -> query("SELECT * FROM members");
   $email = null;
   if(!isset($_POST['email']) || !strlen($_POST['email'])){
     $errors['email'] = 'メールアドレスを入力してください';
-  }elseif ($result !== false && mysql_num_rows($result)) {
-  	while($post = mysql_fetch_assoc($result)):
-			if($_POST['email'] == $post['email']){
+  }elseif ($stmt !== false) {
+  	while($item = $stmt->fetch()){
+			if($item['email'] == $_POST['email']){
 				$errors['email'] = 'このメールアドレスはすでに使われてます';
 			}
-	endwhile;
+		}
   }else{
     $email = $_POST['email'];
   }
   $password = null;
- //  if(!isset($_POST['password']) || !strlen($_POST['password'])){
- //   $errors['password'] ='パスワードを入力してください';
- // }elseif (strlen($_POST['password']) < 5) {
- //    $errors['password'] ='5文字以上入力してください';
- //  } else {
- //    $password = $_POST['password'];
- //  }
+	if(empty($errors)){
+  	header( 'Location: check.php');
+  }
 }
-if(count($errors) ===0){
-	header( 'Location: check.php');
-}
-//エラーがなければcheck.php(登録確認ペーゾへ移動)
+
 
 ?>
 <!DOCTYPE html>
@@ -81,13 +72,13 @@ if(count($errors) ===0){
           value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES, 'UTF-8');?>">
     		</div>
   		</div>
-  		<!-- <div class="form-group">
+  		 <div class="form-group">
     		<label for="inputPassword3" class="col-sm-2 control-label">パスワード</label>
     			<div class="col-sm-8">
       			<input type="text"　name="password" class="form-control" id="inputPassword3" placeholder="Password"
             value="<?php echo htmlspecialchars($_POST['password'],ENT_QUOTES, 'UTF-8');?>">
     			</div>
-  		</div> -->
+  		</div>
   		<div class="form-group">
     		<div class="col-sm-offset-2 col-sm-8">
       		<div class="checkbox">

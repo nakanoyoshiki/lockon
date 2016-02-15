@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   }else {
     $email = $_POST['email'];
   }
-  $password = null;
+  //$password = null;
   // if(!isset($_POST['password']) || !strlen($_POST['password'])){
   //     $errors['password'] ='パスワードを入力してください';
   //   }elseif (strlen($_POST['password']) < 1) {
@@ -25,14 +25,16 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   //   } else {
   //   $password = $_POST['password'];
   // }
-	if(count($errors) ===0){
-    $sql = sprintf('INSERT INTO members SET name="%s" , email="%s", password="%s" ',
-      mysql_real_escape_string($name),
-      mysql_real_escape_string($email),
-      mysql_real_escape_string($password)
-    );
+	if(count($errors) ==0){
+    $stmt = $pdo -> prepare("INSERT INTO members(name,email) VALUES (:name, :email)");
+		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+		$stmt->bindValue(':email', $email, PDO::PARAM_STR);
+    //$stmt->bindValue(':password', $password, PDO::PARAM_STR);
+		$stmt->execute();
+    header('Location: thanks.php');
+  	exit();
 	}
-	mysql_query($sql,$link);
+
 }
 ?>
 <!DOCTYPE html>
@@ -49,7 +51,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   		<h1>会員登録 <small>Subtext for header</small></h1>
 		</div>
 		<input type="hidden" name="action" value="submit" />
-		<form class="form-horizontal" id="frmInput" action="thanks.php" method="post" enctype="multipart/form-data">
+		<form class="form-horizontal" id="frmInput" action="" method="post" enctype="multipart/form-data">
       <input type="hidden" name="action" value="=submit" />
 			<div class="form-group">
 				<label for="inputPassword3" class="col-sm-2 control-label">名前</label>
@@ -60,7 +62,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 			<div class="form-group">
     		<label for="inputEmail3" class="col-sm-2 control-label">メールアドレス</label>
     		<div class="col-sm-8">
-      		<input type="email" name="email" class="form-control" id="email" placeholder="Email"value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES, 'UTF-8');?>">
+      		<input type="email" name="email" class="form-control" id="email" placeholder="Email"value="<?php echo htmlspecialchars($_GET['email'],ENT_QUOTES, 'UTF-8');?>">
     		</div>
   		</div>
   		<div class="form-group">

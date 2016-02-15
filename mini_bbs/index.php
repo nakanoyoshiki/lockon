@@ -12,8 +12,6 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	}else {
 		$name = $_POST['name'];
 	}
-
-
 	$message = null;
 	if(!isset($_POST['message']) || !strlen($_POST['message'])){
 		$errors['message']= 'messageを入力して下さい';
@@ -23,14 +21,25 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		$message = $_POST['message'];
 	}
 	if(count($errors) ===0){
-		$sql = sprintf("INSERT INTO posts SET name='%s' , message='%s'",
-			mysql_real_escape_string($name),
-		  mysql_real_escape_string($message)
-		);
+		$stmt = $pdo -> prepare("INSERT INTO posts(name,message) VALUES (:name, :message)");
+		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+		$stmt->bindValue(':message', $message, PDO::PARAM_INT);
+		$stmt->execute();
 	}
-	mysql_query($sql, $link);
-
 }
+
+//ログインしてるユーザーかの確認
+// $logid = $_SESSION['id'];
+// if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+// $_SESSION['time'] = time();
+// $stmt = $pdo -> prepare('SELECT * FROM members WHERE id= :logid;');
+// $stmt -> bindParam(':logid', $logid, PDO::PARAM_STR);
+// $stmt -> execute();
+// $member = $stmt -> fetch(PDO::FETCH_ASSOC);
+// }else{
+// header('Location: login.php');
+// exit;
+// }
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -71,9 +80,10 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 
 		<br>
 <?php
-    $result = mysql_query('SELECT * FROM posts ORDER BY id DESC');
-		if($result !== false && mysql_num_rows($result)) :
-		 while($post = mysql_fetch_assoc($result)): ?>
+		$stsm=null;
+    $stsm = $pdo->query('SELECT * FROM posts ORDER BY id DESC');
+
+		 while($post  = $stsm -> fetch(PDO::FETCH_ASSOC)) : ?>
 		<div class="col-sm-offset-2 col-sm-8">
 			<small><?php  print htmlspecialchars($post['id'], ENT_QUOTES,'UTF-8');?></small>
 			<div class="panel panel-primary">
@@ -100,7 +110,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 				</div>
 			</div>
         <?php endwhile; ?>
-    <?php endif;?>
+
 
 	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
