@@ -1,6 +1,7 @@
 <?php
-session_start();
+
 require('../dbconnect.php');
+session_start();
 
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
@@ -12,10 +13,18 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	}else {
 		$name = $_POST['name'];
 	}
+
+	$result = mysql_query('SELECT * FROM members ORDER BY id DESC');
   $email = null;
   if(!isset($_POST['email']) || !strlen($_POST['email'])){
     $errors['email'] = 'メールアドレスを入力してください';
-  }else {
+  }elseif ($result !== false && mysql_num_rows($result)) {
+  	while($post = mysql_fetch_assoc($result)):
+			if($_POST['email'] == $post['email']){
+				$errors['email'] = 'このメールアドレスはすでに使われてます';
+			}
+	endwhile;
+  }else{
     $email = $_POST['email'];
   }
   $password = null;
@@ -26,13 +35,11 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
  //  } else {
  //    $password = $_POST['password'];
  //  }
-	 if(count($errors) ===0){
-     $_SESSION['join'] = $_POST;
-     header('Location: check.php');
-     exit();
 }
-
+if(count($errors) ===0){
+	header( 'Location: check.php');
 }
+//エラーがなければcheck.php(登録確認ペーゾへ移動)
 
 ?>
 <!DOCTYPE html>
@@ -74,13 +81,13 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
           value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES, 'UTF-8');?>">
     		</div>
   		</div>
-  		<div class="form-group">
+  		<!-- <div class="form-group">
     		<label for="inputPassword3" class="col-sm-2 control-label">パスワード</label>
     			<div class="col-sm-8">
       			<input type="text"　name="password" class="form-control" id="inputPassword3" placeholder="Password"
             value="<?php echo htmlspecialchars($_POST['password'],ENT_QUOTES, 'UTF-8');?>">
     			</div>
-  		</div>
+  		</div> -->
   		<div class="form-group">
     		<div class="col-sm-offset-2 col-sm-8">
       		<div class="checkbox">

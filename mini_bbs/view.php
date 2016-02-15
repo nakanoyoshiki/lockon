@@ -32,7 +32,7 @@ $result = mysql_query($recortlist , $db_selected);
 
   <!-- <?php if ($result !== false && mysql_num_rows($result)): ?>
     <ul>
-      <?php while($post = mysqli_fetch_assoc($rresult)): ?>
+      <?php while($post = mysqli_fetch_assoc($result)): ?>
         <li>
           <?php echo htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8'); ?>
         </li>

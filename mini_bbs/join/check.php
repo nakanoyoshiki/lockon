@@ -18,13 +18,13 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     $email = $_POST['email'];
   }
   $password = null;
-  if(!isset($_POST['password']) || !strlen($_POST['password'])){
-      $errors['password'] ='パスワードを入力してください';
-    }elseif (strlen($_POST['password']) < 1) {
-      $errors['password'] ='5文字以上入力してください';
-    } else {
-    $password = $_POST['password'];
-  }
+  // if(!isset($_POST['password']) || !strlen($_POST['password'])){
+  //     $errors['password'] ='パスワードを入力してください';
+  //   }elseif (strlen($_POST['password']) < 1) {
+  //     $errors['password'] ='5文字以上入力してください';
+  //   } else {
+  //   $password = $_POST['password'];
+  // }
 	if(count($errors) ===0){
     $sql = sprintf('INSERT INTO members SET name="%s" , email="%s", password="%s" ',
       mysql_real_escape_string($name),
@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
       mysql_real_escape_string($password)
     );
 	}
-	mysql_query($sql);
+	mysql_query($sql,$link);
 }
 ?>
 <!DOCTYPE html>
@@ -45,30 +45,6 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     <link href="../css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
-		<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <!-- <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Brand</a>
-    </div> -->
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><a href="#">Link</a></li>
-      </ul>
-      <ul class="nav navbar-nav ">
-        <li><a href="#">Link</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
 		<div class="page-header">
   		<h1>会員登録 <small>Subtext for header</small></h1>
 		</div>
@@ -78,19 +54,19 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 			<div class="form-group">
 				<label for="inputPassword3" class="col-sm-2 control-label">名前</label>
 					<div class="col-sm-8">
-						<input type="text" name="name" class="form-control" id="name" placeholder="name">
+						<input type="text" name="name" class="form-control" id="name" placeholder="name" value="<?php echo htmlspecialchars($_POST['name'],ENT_QUOTES, 'UTF-8');?>">
 					</div>
 			</div>
 			<div class="form-group">
     		<label for="inputEmail3" class="col-sm-2 control-label">メールアドレス</label>
     		<div class="col-sm-8">
-      		<input type="email" name="email" class="form-control" id="email" placeholder="Email">
+      		<input type="email" name="email" class="form-control" id="email" placeholder="Email"value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES, 'UTF-8');?>">
     		</div>
   		</div>
   		<div class="form-group">
     		<label for="inputPassword3" class="col-sm-2 control-label">パスワード</label>
     			<div class="col-sm-8">
-      			<input type="text"　name="password" class="form-control" id="password" placeholder="Password">
+      			<input type="text"　name="password" class="form-control" id="password" placeholder="Password" value="<?php echo htmlspecialchars($_POST['password'],ENT_QUOTES, 'UTF-8');?>">
     			</div>
   		</div>
   		<div class="form-group">
