@@ -1,20 +1,31 @@
 <?php
 require('../dbconnect.php');
 session_start();
+if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()){
+	echo $_SESSION['id'];
+	$_SESSION['time'] = time();
+	$id = $_SESSION['id'];
+	$stmt = $pdo -> prepare("SELECT * FROM members WHERE id = ?;");
+	$stmt->bindValue(1, $id);
+	$stmt->execute();
+	if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
+	}
+}
+$name = $email = $password ="";
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
 	$name = null;
-	if(!isset($_POST['name']) || !strlen($_POST['name'])){
+	if(!isset($_POST['name']) || !mb_strlen($_POST['name'])){
 		$errors['name']= '名前を入力してください';
-	}elseif (strlen($_POST['name']) > 15) {
+	}elseif (mb_strlen($_POST['name']) > 15) {
 		$errors['name'] = '名前は15文字以内で入力してください';
 	}else {
 		$name = $_POST['name'];
 	}
 	$stmt = $pdo -> query("SELECT * FROM members");
   $email = null;
-  if(!isset($_POST['email']) || !strlen($_POST['email'])){
+  if(!isset($_POST['email']) || !mb_strlen($_POST['email'])){
     $errors['email'] = 'メールアドレスを入力してください';
   }elseif ($stmt !== false) {
   	while($item = $stmt->fetch()){
@@ -26,12 +37,20 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     $email = $_POST['email'];
   }
   $password = null;
+	if(!isset($_POST['password'])	){
+		$errors['password'] ='パスワードを入力してください';
+  }elseif (mb_strlen($_POST['password']) < 5) {
+		$errors['password'] ='5文字以上入力してください';
+  } else {
+  $password = $_POST['password'];
+	}
 	if(empty($errors)){
+		$_SESSION['name'] = $_POST['name'];
+		$_SESSION['email'] = $_POST['email'];
+		$_SESSION['password'] = $_POST['password'];
   	header( 'Location: check.php');
   }
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -59,24 +78,24 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     <?php endif ?>
 		<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
 			<div class="form-group">
-				<label for="inputPassword3" class="col-sm-2 control-label">名前</label>
+				<label class="col-sm-2 control-label">名前</label>
 					<div class="col-sm-8">
-						<input type="text" name="name" class="form-control" id="inputPassword3" placeholder="name"
-             value="<?php echo htmlspecialchars($_POST['name'],ENT_QUOTES, 'UTF-8');?>">
+						<input type="text" name="name" class="form-control"  placeholder="name"
+             value="<?php echo htmlspecialchars($name,ENT_QUOTES, 'UTF-8');?>">
 					</div>
 			</div>
 			<div class="form-group">
-    		<label for="inputEmail3" class="col-sm-2 control-label">メールアドレス</label>
+    		<label class="col-sm-2 control-label">メールアドレス</label>
     		<div class="col-sm-8">
-      		<input type="email" name="email" class="form-control" id="inputEmail3" placeholder="Email"
-          value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES, 'UTF-8');?>">
+      		<input type="email" name="email" class="form-control"  placeholder="Email"
+          value="<?php echo htmlspecialchars($email,ENT_QUOTES, 'UTF-8');?>">
     		</div>
   		</div>
   		 <div class="form-group">
-    		<label for="inputPassword3" class="col-sm-2 control-label">パスワード</label>
+    		<label class="col-sm-2 control-label">パスワード</label>
     			<div class="col-sm-8">
-      			<input type="text"　name="password" class="form-control" id="inputPassword3" placeholder="Password"
-            value="<?php echo htmlspecialchars($_POST['password'],ENT_QUOTES, 'UTF-8');?>">
+      			<input type="text" name="password" class="form-control"  placeholder="Password"
+            value="<?php echo htmlspecialchars($password,ENT_QUOTES, 'UTF-8');?>">
     			</div>
   		</div>
   		<div class="form-group">

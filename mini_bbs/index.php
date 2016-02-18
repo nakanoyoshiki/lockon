@@ -1,17 +1,19 @@
 <?php
 session_start();
 require('dbconnect.php');
-
+if(isset($_SESSION['id'])){
+	$_SESSION['time'] = time();
+	$id = $_SESSION['id'];
+	$stmt = $pdo -> prepare("SELECT * FROM members WHERE id = ?;");
+	$stmt->bindValue(1, $id);
+	$stmt->execute();
+	$member = $stmt->fetch(PDO::FETCH_ASSOC);
+}else{
+	//ログインしていない時はindex.phpに入れなくするのか、編集などをできないようにするのか未定
+	header('Location: login.php'); exit();
+}
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
-	$name = null;
-	if(!isset($_POST['name']) || !strlen($_POST['name'])){
-		$errors['name']= '名前を入力して下さい';
-	}elseif (strlen($_POST['name']) > 15) {
-		$errors['name'] = '名前は15文字以内で入力してください';
-	}else {
-		$name = $_POST['name'];
-	}
 	$message = null;
 	if(!isset($_POST['message']) || !strlen($_POST['message'])){
 		$errors['message']= 'messageを入力して下さい';
@@ -21,9 +23,9 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		$message = $_POST['message'];
 	}
 	if(count($errors) ===0){
-		$stmt = $pdo -> prepare("INSERT INTO posts(name,message) VALUES (:name, :message)");
-		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
-		$stmt->bindValue(':message', $message, PDO::PARAM_INT);
+		$stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
+		$stmt->bindParam(':member_id', $id, PDO::PARAM_STR);
+		$stmt->bindValue(':message', $message, PDO::PARAM_STR);
 		$stmt->execute();
 	}
 }
@@ -52,7 +54,9 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   </head>
   <body>
 		<div class="page-header">
-	  	<h1>掲示板 <small>Subtext for header</small></h1>
+	  	<h1>掲示板 <small>Subtext for heade</small></h1>
+			<div class="pull-right"><a href ="login.php">ログイン</a></div>
+			<div class="pull-right"><a href ="logout.php">ログアウト</a></div>
 		</div>
 		<form class="form-horizontal" id="frmInput" action="index.php" method="post" enctype="multipart/form-data">
 			<div class="form-group">
@@ -66,9 +70,11 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 							<?php  endforeach; ?>
 						</ul>
 					<?php endif ?>
-          <input type="text" row="5" name="name" class="form-control" id="name">
-          <br>
-					<textarea type="text" rows="5" name="message" class="form-control" id="message" placeholder="メッセージをどうぞ"></textarea>
+				<?php if(!empty($member['name'])): ?>
+			<h3>
+			<?php	echo htmlspecialchars($member['name'])?> さん、今どうしてる？
+			<?php endif ?>
+					<textarea type="text" rows="5" name="message" class="form-control" id="message" ></textarea>
 				</div>
 			</div>
 	  	<div class="form-group">
@@ -81,37 +87,31 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		<br>
 <?php
 		$stsm=null;
-    $stsm = $pdo->query('SELECT * FROM posts ORDER BY id DESC');
-
+		$stsm = $pdo->query('SELECT posts.member_id ,members.name ,posts.message, posts.created , posts.id FROM members,posts WHERE members.id = posts.member_id ORDER BY posts.created DESC');
+		$stsm->execute();
 		 while($post  = $stsm -> fetch(PDO::FETCH_ASSOC)) : ?>
 		<div class="col-sm-offset-2 col-sm-8">
-			<small><?php  print htmlspecialchars($post['id'], ENT_QUOTES,'UTF-8');?></small>
+			<small><?php  print htmlspecialchars($post['member_id'], ENT_QUOTES,'UTF-8');?></small>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">
-
-						<?php  print htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8');
-					?>
+						<?php  print htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8');?>
 						<small class="pull-right"><?php  print htmlspecialchars($post['created'], ENT_QUOTES,'UTF-8');?></small>
-
-
-
-
 							</h3>
 					</div>
 					<div class="panel-body">
+					 <?php if(($member['id']) == ($post['member_id'])): ?>
 						<button type="button" class="btn btn-danger btn-xs pull-right">
 							<a href="delete.php?id=<?php print htmlspecialchars($post['id']);?>" onclick="return confirm('削除していいですか？');">削除</a></button>
+
 						<button type="button" class="btn btn-warning btn-xs pull-right">
 							<a href="update.php?id=<?php print htmlspecialchars($post['id']);?>">編集</a></button>
-
 						<?php print htmlspecialchars($post['message'], ENT_QUOTES,'UTF-8');?>
+							<?php endif ?>
 					</div>
 				</div>
 			</div>
         <?php endwhile; ?>
-
-
 	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

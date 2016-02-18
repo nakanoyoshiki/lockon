@@ -1,47 +1,26 @@
 <?php
 require('dbconnect.php');
 session_start();
+$_POST['save'] =null;
+$email = $password ="";
+$email = $_POST['email'];
+$password = $_POST['password'];
 $errors = array();
-$stmt = $pdo -> query("SELECT * FROM members");
- // while($item = $stmt->fetch()){
- //
- //     echo $item['name'];
- //   }
-
-
-$count_login =0;
-//if($_SERVER['REQUEST_METHOD']== 'POST'){
-  if(count($errors) ==0){
-    if(!empty($_POST["email"]) || !empty($_POST["name"])){
-      // $stmt -> bindParam(':email', $email, PDO::PARAM_STR);
-      // $stmt -> bindParam(':name', $name, PDO::PARAM_STR);
-      // $stmt -> execute();
-      //echo '最初';
-      if($stmt !== false){
-        //echo ':::::::::::::::::';
-        while($item = $stmt->fetch()){
-          //echo '確認してる';
-
-          if($item['email'] == $_POST['email']){
-          //  echo $item['email'];
-            if($item['email'] == $_POST['email']){
-          //    echo 'ソロッターーーー';
-              $count_login = $count_login +1;
-            }
-          }
-        }
-        if($count_login==1){
-      //    echo 'ログインできる';
-      //    echo $_POST['email'];
-          header( 'Location: index.php');
-
-        }else{
-          print $item['email'];
-        }
+$stmt = $pdo -> prepare("SELECT * FROM members WHERE email = ? AND password = ?;");
+$stmt->bindValue(1, $email);
+$stmt->bindValue(2, $password);
+$stmt->execute();
+if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      $_SESSION['id'] = $row['id'];
+      $_SESSION['time'] = time();
+      header('Location: index.php ');// ログイン成功
+      if($_POST['save'] =='on'){
+        setcookie('email', $_POST['email']. time()+60*60*24*14);
+        setcookie('password', $_POST['password']. time()+60*60*24*14);
       }
-}
-
-}
+  }else{
+    $error['login'] = 'failed';
+  }
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -62,23 +41,17 @@ $count_login =0;
     </div>
 		<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
 			<div class="form-group">
-    		<label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+    		<label  class="col-sm-2 control-label">Email</label>
     		<div class="col-sm-8">
-      		<input type="email" name="email" class="form-control" id="inputEmail3" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email']); ?>">
+      		<input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($email); ?>">
     		</div>
   		</div>
-      <!-- <div class="form-group">
-        <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-          <div class="col-sm-8">
-            <input type="password"　name="password" class="form-control" id="inputPassword3" placeholder="Password" value="<?php echo htmlspecialchars($_POST['password']); ?>">
-          </div>
-      </div> -->
-  		<div class="form-group">
-    		<label for="inputName3" class="col-sm-2 control-label">名前</label>
-    			<div class="col-sm-8">
-      			<input type="text"　email="email" class="form-control" id="inputName3" placeholder="Name" value="<?php echo htmlspecialchars($_POST['email']); ?>">
-    			</div>
-  		</div>
+      <div class="form-group">
+        <label  class="col-sm-2 control-label">passsword</label>
+        <div class="col-sm-8">
+          <input type="text" name="password" class="form-control"  value="<?php echo htmlspecialchars($password); ?>">
+        </div>
+      </div>
   		<div class="form-group">
     		<div class="col-sm-offset-2 col-sm-8">
       		<div class="checkbox">
@@ -94,7 +67,6 @@ $count_login =0;
     		</div>
   		</div>
 		</form>
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

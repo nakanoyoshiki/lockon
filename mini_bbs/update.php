@@ -2,29 +2,12 @@
 session_start();
 require('dbconnect.php');
 
-
 $id = $_REQUEST['id'];
-echo $id;
-//$id = mysqli_real_escape_string($link, $id);
-$result = sprintf("SELECT * FROM posts WHERE id='%d'",
-  mysql_real_escape_string($id)
-);
-
- $post = mysql_fetch_assoc($result);
-
-
+$stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ?");
+$stmt->execute(array($id));
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
-	$name = null;
-	if(!isset($_POST['name']) || !strlen($_POST['name'])){
-		$errors['name']= '名前を入力して下さい';
-	}elseif (strlen($_POST['name']) > 15) {
-		$errors['name'] = '名前は15文字以内で入力してください';
-	}else {
-		$name = $_POST['name'];
-	}
-
-
 	$message = null;
 	if(!isset($_POST['message']) || !strlen($_POST['message'])){
 		$errors['message']= 'messageを入力して下さい';
@@ -34,13 +17,10 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		$message = $_POST['message'];
 	}
 	if(count($errors) ===0){
-		$sql = sprintf("INSERT INTO posts SET name='%s' , message='%s'",
-			mysql_real_escape_string($name),
-		  mysql_real_escape_string($message)
-		);
-	}
-	mysql_query($sql, $link);
-
+    $stmt = $pdo -> prepare("UPDATE posts SET message =? WHERE id = ?");
+    $result = $stmt->execute(array($message, $id));
+		header('Location: index.php');
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -56,7 +36,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		<div class="page-header">
 	  	<h1>掲示板 <small>Subtext for header</small></h1>
 		</div>
-		<form class="form-horizontal" id="frmInput" action="index.php" method="post" enctype="multipart/form-data">
+		<form class="form-horizontal" id="frmInput" action="" method="post" enctype="multipart/form-data">
 			<div class="form-group">
 				<div class="col-sm-8 col-sm-offset-2">
 					<?php if (count($errors) > 0): ?>
@@ -68,16 +48,13 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 							<?php  endforeach; ?>
 						</ul>
 					<?php endif ?>
-          <small><?php  print htmlspecialchars($post['id'], ENT_QUOTES,'UTF-8');?></small>
-          <input type="text" row="5" name="name" class="form-control" id="name" value="<?php printf(htmlspecialchars($post['name'], ENT_QUOTES));?>">
-          <br>
-					<input type="text" rows="5" name="message" class="form-control" id="message" value="<?php printf(htmlspecialchars($post['message'], ENT_QUOTES));?>">
+          <small><?php  print htmlspecialchars($result['id'], ENT_QUOTES,'UTF-8');?></small>
+					<input type="text" rows="5" name="message" class="form-control" id="message" value="<?php printf(htmlspecialchars($result['message'], ENT_QUOTES));?>">
 				</div>
 			</div>
 	  	<div class="form-group">
 	    	<div class="col-sm-offset-2 col-sm-8">
 	      	<input type="submit" value="変更" class="btn btn-primary">
-          <!-- <input type="hidden" name='id' value="<?php printf(htmlspecialchars['id'], ENT_QUOTES);?>"/> -->
 	    	</div>
 	  	</div>
 		</form>

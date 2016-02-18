@@ -3,7 +3,6 @@
 $left =null;
 $right=null;
 $ope=null;
-$error_conut =0;
 $answer=null;
 $errors = array();
 if($_SERVER['REQUEST_METHOD']== 'POST'){
@@ -34,18 +33,17 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
       case "÷":
         if($right == '0'){
           $errors['no_division']= 'このような割り算はできません';
-          $error_conut = 1;
+
         }else{
           $answer = $left / $right;
         }
         break;
       default:
-        $error_conut = 1;
+
         $errors['no_four_arithmetic'] = '四則演算してください';
         break;
     }
   }else{
-    $error_conut = 1;
     $errors['no_calculation'] ='このような計算はできません';
   }
 }
@@ -61,10 +59,10 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     <form name="form1" action="" method="post">
       <input type = "text" name = "leftbox" value="<?PHP print htmlspecialchars($left);?>">　
       <select name="selOpe" size=1>
-        <option value = "＋">＋</option>
-        <option value = "－">－</option>
-        <option value = "×">×</option>
-        <option value = "÷">÷</option>
+        <option value = "＋" <?php if($ope =="+"){echo 'selected';} ?>>+</option>
+        <option value = "－" <?php if($ope =="-"){echo 'selected';} ?>>－</option>
+        <option value = "×" <?php if($ope =="×"){echo 'selected';} ?>>×</option>
+        <option value = "÷" <?php if($ope =="÷"){echo 'selected';} ?>>÷</option>
       </select>　
       <input type = "text" name = "rightbox" value="<?PHP print htmlspecialchars($right);?>">
       <br>
@@ -73,7 +71,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     </form>
     <?php
       if($_SERVER['REQUEST_METHOD']== 'POST'){
-        if($error_conut == 0){
+        if(count($errors)){
           print htmlspecialchars($left . " " . $ope . " " . $right."   = " . $answer);
         }
       }
