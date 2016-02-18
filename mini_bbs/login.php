@@ -1,26 +1,24 @@
 <?php
 require('dbconnect.php');
 session_start();
-$_POST['save'] =null;
-$email = $password ="";
-$email = $_POST['email'];
-$password = $_POST['password'];
+$email = $password = "";
+if(isset($_POST['email'])){
+  $email = $_POST['email'];
+}
+if(isset($_POST['password'])){
+  $password = $_POST['password'];
+}
 $errors = array();
-$stmt = $pdo -> prepare("SELECT * FROM members WHERE email = ? AND password = ?;");
-$stmt->bindValue(1, $email);
-$stmt->bindValue(2, $password);
-$stmt->execute();
-if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-      $_SESSION['id'] = $row['id'];
-      $_SESSION['time'] = time();
-      header('Location: index.php ');// ログイン成功
-      if($_POST['save'] =='on'){
-        setcookie('email', $_POST['email']. time()+60*60*24*14);
-        setcookie('password', $_POST['password']. time()+60*60*24*14);
-      }
-  }else{
-    $error['login'] = 'failed';
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+  $stmt = $pdo -> prepare("SELECT * FROM members WHERE email = ? AND password = ?;");
+  $stmt->bindValue(1, $email);
+  $stmt->bindValue(2, $password);
+  $stmt->execute();
+  if($member = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $_SESSION['id'] = $member['id'];
+        header('Location: index.php ');// ログイン成功
   }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -54,22 +52,11 @@ if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
       </div>
   		<div class="form-group">
     		<div class="col-sm-offset-2 col-sm-8">
-      		<div class="checkbox">
-        		<label>
-          		<input type="checkbox" name="save"> Remember me
-        		</label>
-      		</div>
-    		</div>
-  		</div>
-  		<div class="form-group">
-    		<div class="col-sm-offset-2 col-sm-8">
       		<button type="submit" value="入力内容を確認する" class="btn btn-default">Sign in</button>
     		</div>
   		</div>
 		</form>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>

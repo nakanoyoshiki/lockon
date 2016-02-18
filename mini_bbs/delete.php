@@ -1,11 +1,12 @@
 <?php
 session_start();
 require('dbconnect.php');
-$id = $_REQUEST['id'];
-$stmt = $pdo->prepare("DELETE FROM posts WHERE id = ?");
-$stmt->execute(array($id));
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-header('Location: index.php');
+if(isset($_SESSION['id'])){
+  $id = $_REQUEST['id'];
+  $stmt = $pdo -> prepare("DELETE FROM posts WHERE id = ?");
+  $stmt -> execute(array($id));
+  header('Location: index.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">

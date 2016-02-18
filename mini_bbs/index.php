@@ -2,21 +2,21 @@
 session_start();
 require('dbconnect.php');
 if(isset($_SESSION['id'])){
-	$_SESSION['time'] = time();
 	$id = $_SESSION['id'];
-	$stmt = $pdo -> prepare("SELECT * FROM members WHERE id = ?;");
+	$stmt = $pdo -> prepare("SELECT name, id  FROM members WHERE id = ?;");
 	$stmt->bindValue(1, $id);
 	$stmt->execute();
 	$member = $stmt->fetch(PDO::FETCH_ASSOC);
+	echo $id;
 }else{
-	//ログインしていない時はindex.phpに入れなくするのか、編集などをできないようにするのか未定
-	header('Location: login.php'); exit();
+	header('Location: login.php');
+	exit();
 }
 $errors = array();
-if($_SERVER['REQUEST_METHOD']== 'POST'){
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	$message = null;
-	if(!isset($_POST['message']) || !strlen($_POST['message'])){
-		$errors['message']= 'messageを入力して下さい';
+	if(!isset($_POST['message']) || !mb_strlen($_POST['message'])){
+		$errors['message'] = 'messageを入力して下さい';
 	}elseif (strlen($_POST['message']) > 140) {
 		$errors['message'] = 'messageは140文字以内で入力してください';
 	}else{
@@ -24,24 +24,12 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	}
 	if(count($errors) ===0){
 		$stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
-		$stmt->bindParam(':member_id', $id, PDO::PARAM_STR);
-		$stmt->bindValue(':message', $message, PDO::PARAM_STR);
-		$stmt->execute();
+	//	$stmt = $pdo -> prepare("INSERT INTO posts(name,message) VALUES (:name, :message)");
+ 		$stmt->bindParam(':member_id', $id, PDO::PARAM_INT);
+ 		$stmt->bindParam(':message', $message, PDO::PARAM_STR);
+ 		$stmt->execute();
 	}
 }
-
-//ログインしてるユーザーかの確認
-// $logid = $_SESSION['id'];
-// if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-// $_SESSION['time'] = time();
-// $stmt = $pdo -> prepare('SELECT * FROM members WHERE id= :logid;');
-// $stmt -> bindParam(':logid', $logid, PDO::PARAM_STR);
-// $stmt -> execute();
-// $member = $stmt -> fetch(PDO::FETCH_ASSOC);
-// }else{
-// header('Location: login.php');
-// exit;
-// }
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -55,7 +43,9 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   <body>
 		<div class="page-header">
 	  	<h1>掲示板 <small>Subtext for heade</small></h1>
-			<div class="pull-right"><a href ="login.php">ログイン</a></div>
+			<?php if(!isset($_SESSION['id'])): ?>
+				<div class="pull-right"><a href ="login.php">ログイン</a></div>
+			<?php endif ?>
 			<div class="pull-right"><a href ="logout.php">ログアウト</a></div>
 		</div>
 		<form class="form-horizontal" id="frmInput" action="index.php" method="post" enctype="multipart/form-data">
@@ -83,39 +73,36 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	    	</div>
 	  	</div>
 		</form>
-
-		<br>
 <?php
 		$stsm=null;
-		$stsm = $pdo->query('SELECT posts.member_id ,members.name ,posts.message, posts.created , posts.id FROM members,posts WHERE members.id = posts.member_id ORDER BY posts.created DESC');
+		$stsm = $pdo->query('SELECT posts.member_id ,members.name ,posts.message, posts.created , posts.id
+			FROM members,posts WHERE members.id = posts.member_id ORDER BY posts.created DESC');
 		$stsm->execute();
-		 while($post  = $stsm -> fetch(PDO::FETCH_ASSOC)) : ?>
+		while($post  = $stsm -> fetch(PDO::FETCH_ASSOC)) : ?>
 		<div class="col-sm-offset-2 col-sm-8">
-			<small><?php  print htmlspecialchars($post['member_id'], ENT_QUOTES,'UTF-8');?></small>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">
 						<?php  print htmlspecialchars($post['name'], ENT_QUOTES,'UTF-8');?>
 						<small class="pull-right"><?php  print htmlspecialchars($post['created'], ENT_QUOTES,'UTF-8');?></small>
-							</h3>
-					</div>
-					<div class="panel-body">
-					 <?php if(($member['id']) == ($post['member_id'])): ?>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<?php if(($member['id']) == ($post['member_id'])): ?>
 						<button type="button" class="btn btn-danger btn-xs pull-right">
-							<a href="delete.php?id=<?php print htmlspecialchars($post['id']);?>" onclick="return confirm('削除していいですか？');">削除</a></button>
-
+							<a href="delete.php?id=<?php print htmlspecialchars($post['id']);?>" onclick="return confirm('削除していいですか？');">削除</a>
+						</button>
 						<button type="button" class="btn btn-warning btn-xs pull-right">
-							<a href="update.php?id=<?php print htmlspecialchars($post['id']);?>">編集</a></button>
-						<?php print htmlspecialchars($post['message'], ENT_QUOTES,'UTF-8');?>
-							<?php endif ?>
-					</div>
+							<a href="update.php?id=<?php print htmlspecialchars($post['id']);?>">編集</a>
+						</button>
+					<?php endif ?>
+					<?php print htmlspecialchars($post['message'], ENT_QUOTES,'UTF-8');?>
 				</div>
 			</div>
-        <?php endwhile; ?>
+		</div>
+    <?php endwhile; ?>
 	</div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>

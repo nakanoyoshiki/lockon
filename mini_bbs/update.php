@@ -1,26 +1,27 @@
 <?php
 session_start();
 require('dbconnect.php');
-
-$id = $_REQUEST['id'];
-$stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ?");
-$stmt->execute(array($id));
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-$errors = array();
-if($_SERVER['REQUEST_METHOD']== 'POST'){
-	$message = null;
-	if(!isset($_POST['message']) || !strlen($_POST['message'])){
-		$errors['message']= 'messageを入力して下さい';
-	}elseif (strlen($_POST['message']) > 140) {
-		$errors['message'] = 'messageは140文字以内で入力してください';
-	}else{
-		$message = $_POST['message'];
+if(isset($_SESSION['id'])){
+	$id = $_REQUEST['id'];
+	$stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ?");
+	$stmt->execute(array($id));
+	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+	$errors = array();
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+		$message = null;
+		if(!isset($_POST['message']) || !strlen($_POST['message'])){
+			$errors['message'] = 'messageを入力して下さい';
+		}elseif (strlen($_POST['message']) > 140) {
+			$errors['message'] = 'messageは140文字以内で入力してください';
+		}else{
+			$message = $_POST['message'];
+		}
+		if(count($errors) === 0){
+    	$stmt = $pdo -> prepare("UPDATE posts SET message =? WHERE id = ?");
+    	$result = $stmt->execute(array($message, $id));
+			header('Location: index.php');
+  	}
 	}
-	if(count($errors) ===0){
-    $stmt = $pdo -> prepare("UPDATE posts SET message =? WHERE id = ?");
-    $result = $stmt->execute(array($message, $id));
-		header('Location: index.php');
-  }
 }
 ?>
 <!DOCTYPE html>
@@ -58,10 +59,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 	    	</div>
 	  	</div>
 		</form>
-
 		<br>
-
-
 	</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

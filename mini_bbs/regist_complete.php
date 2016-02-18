@@ -18,13 +18,11 @@
     </div>
   	<div class="form-group">
     	<div class="col-sm-offset-2 col-sm-8">
-      	<button type="submit" value="入力内容を確認する" class="btn btn-default">Sign in</button>
+      	<button type="submit"  class="btn btn-default"><a href="../index.php">Sign in</a></button>
     	</div>
   	</div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>
