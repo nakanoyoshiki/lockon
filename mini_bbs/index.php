@@ -24,7 +24,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	}
 	if(count($errors) ===0){
 		$stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
-	//	$stmt = $pdo -> prepare("INSERT INTO posts(name,message) VALUES (:name, :message)");
  		$stmt->bindParam(':member_id', $id, PDO::PARAM_INT);
  		$stmt->bindParam(':message', $message, PDO::PARAM_STR);
  		$stmt->execute();

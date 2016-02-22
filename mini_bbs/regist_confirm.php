@@ -1,6 +1,6 @@
 <?php
 session_start();
-require('../dbconnect.php');
+require('dbconnect.php');
 if($_SERVER['REQUEST_METHOD']== 'POST'){
 	if(count($errors) == 0){
     $stmt = $pdo -> prepare("INSERT INTO members(name,email,password) VALUES (:name, :email, :password)");
