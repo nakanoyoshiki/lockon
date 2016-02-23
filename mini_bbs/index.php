@@ -7,7 +7,6 @@ if(isset($_SESSION['id'])){
 	$stmt->bindValue(1, $id);
 	$stmt->execute();
 	$member = $stmt->fetch(PDO::FETCH_ASSOC);
-	echo $id;
 }else{
 	header('Location: login.php');
 	exit();
@@ -23,10 +22,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$message = $_POST['message'];
 	}
 	if(count($errors) ===0){
+		echo $id;
+		echo $message;
 		$stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
- 		$stmt->bindParam(':member_id', $id, PDO::PARAM_INT);
- 		$stmt->bindParam(':message', $message, PDO::PARAM_STR);
+ 		$stmt->bindValue(':member_id', $id, PDO::PARAM_INT);
+ 		$stmt->bindValue(':message', $message, PDO::PARAM_STR);
  		$stmt->execute();
+		var_dump($message);
 	}
 }
 ?>

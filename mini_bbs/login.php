@@ -34,7 +34,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   		<h1>ログイン <small>Subtext for header</small></h1>
 		</div>
     <div class="col-sm-offset-2">
-      <p>&raquo;<a href="join/">まだ会員登録をしていない場合</a></p>
+      <p>&raquo;<a href="regist_form.php">まだ会員登録をしていない場合</a></p>
       <p>メールアドレスとパスワードを記入してログインしてください。</p>
     </div>
 		<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">

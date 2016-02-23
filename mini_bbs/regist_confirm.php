@@ -8,7 +8,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		$stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $stmt->bindValue(':password', $password, PDO::PARAM_STR);
 		$stmt->execute();
-    header('Location: thanks.php');
+    header('Location: regist_complete.php');
   	exit();
 	}
 }
@@ -20,7 +20,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>会員登録</title>
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
 		<div class="page-header">

@@ -44,7 +44,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$_SESSION['name'] = $_POST['name'];
 		$_SESSION['email'] = $_POST['email'];
 		$_SESSION['password'] = $_POST['password'];
-  	header( 'Location: check.php');
+  	header( 'Location: regist_confirm.php');
   }
 }
 ?>
@@ -55,7 +55,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>会員登録</title>
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
 		<div class="page-header">
