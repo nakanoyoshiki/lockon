@@ -17,6 +17,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   if($member = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $_SESSION['id'] = $member['id'];
         header('Location: index.php ');// ログイン成功
+  }else{
+    echo '登録に失敗しました';
   }
 }
 ?>

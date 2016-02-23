@@ -22,13 +22,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$message = $_POST['message'];
 	}
 	if(count($errors) ===0){
-		echo $id;
-		echo $message;
-		$stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
- 		$stmt->bindValue(':member_id', $id, PDO::PARAM_INT);
- 		$stmt->bindValue(':message', $message, PDO::PARAM_STR);
- 		$stmt->execute();
-		var_dump($message);
+		try{
+		  $stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
+			$stmt->bindValue(':member_id', $id, PDO::PARAM_INT);
+	 		$stmt->bindValue(':message', $message, PDO::PARAM_STR);
+	 		$stmt->execute();
+		}catch(PDOException $e) {
+			echo 'insertに失敗しました'.$e->getMessage();
+		}
 	}
 }
 ?>
