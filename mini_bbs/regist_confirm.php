@@ -1,15 +1,43 @@
 <?php
 session_start();
 require('dbconnect.php');
+$email = $password = $name ="";
+	$name = $_SESSION['name'];
+	$email = $_SESSION['email'];
+	$password = $_SESSION['password'];
 if($_SERVER['REQUEST_METHOD']== 'POST'){
-	if(count($errors) == 0){
-    $stmt = $pdo -> prepare("INSERT INTO members(name,email,password) VALUES (:name, :email, :password)");
-		$stmt->bindParam(':name', $name, PDO::PARAM_STR);
-		$stmt->bindValue(':email', $email, PDO::PARAM_STR);
-    $stmt->bindValue(':password', $password, PDO::PARAM_STR);
-		$stmt->execute();
-    header('Location: regist_complete.php');
-  	exit();
+	if(!isset($name) || !mb_strlen($name)){
+		$errors['name'] = '名前を入力してください';
+	}elseif (mb_strlen($name) > 15) {
+		$errors['name'] = '名前は15文字以内で入力してください';
+	}
+	$stmt = $pdo -> prepare("SELECT email FROM members WHERE email = ?");
+	$stmt-> execute(array($email));
+  if(!isset($email) || !mb_strlen($email)){
+    $errors['email'] = 'メールアドレスを入力してください';
+  }elseif ($stmt !== false) {
+  	while($item = $stmt->fetch(PDO::FETCH_ASSOC)){
+			if($item['email'] == $_POST['email']){
+				$errors['email'] = 'このメールアドレスはすでに使われてます';
+			}
+		}
+  }
+	if(!isset($password)	){
+		$errors['password'] ='パスワードを入力してください';
+  }elseif (mb_strlen($password) < 5) {
+		$errors['password'] = '5文字以上入力してください';
+  }
+	if(empty($errors)){
+		try{
+			$stmt = $pdo -> prepare("INSERT INTO members(name,email,password) VALUES (:name, :email, :password)");
+			$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+			$stmt->bindValue(':email', $email, PDO::PARAM_STR);
+	    $stmt->bindValue(':password', $password, PDO::PARAM_STR);
+			$stmt->execute();
+	    header('Location: regist_complete.php');
+		}catch(PDOException $e) {
+			$errors['insert'] =  '申し訳ございませんが、登録できませんでした';//.$e->getMessage();
+		}
 	}
 }
 ?>
@@ -24,9 +52,8 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   </head>
   <body>
 		<div class="page-header">
-  		<h1>会員登録 <small>Subtext for header</small></h1>
+  		<h1>会員登録</h1>
 		</div>
-		<input type="hidden" name="action" value="submit" />
 		<form class="form-horizontal"  action="" method="post" enctype="multipart/form-data">
       <input type="hidden" name="action" value="=submit" />
 			<div class="form-group">
@@ -44,7 +71,14 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
   		<div class="form-group">
     		<label  class="col-sm-2 control-label">パスワード</label>
     			<div class="col-sm-8">
-      			<?php echo htmlspecialchars($_SESSION['password'],ENT_QUOTES, 'UTF-8');?>
+						<?php $count = 0;
+									$password_num = mb_strlen($_SESSION['password']);
+									$pass = '*';
+									while ($count < $password_num){
+										$count++;
+										echo $pass;
+									}
+						?>
     			</div>
   		</div>
   		<div class="form-group">

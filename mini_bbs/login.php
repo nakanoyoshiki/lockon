@@ -2,23 +2,33 @@
 require('dbconnect.php');
 session_start();
 $email = $password = "";
-if(isset($_POST['email'])){
-  $email = $_POST['email'];
-}
-if(isset($_POST['password'])){
-  $password = $_POST['password'];
-}
 $errors = array();
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-  $stmt = $pdo -> prepare("SELECT * FROM members WHERE email = ? AND password = ?;");
-  $stmt->bindValue(1, $email);
-  $stmt->bindValue(2, $password);
-  $stmt->execute();
-  if($member = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $_SESSION['id'] = $member['id'];
-        header('Location: index.php ');// ログイン成功
+  if(!isset($_POST['email']) || !mb_strlen($_POST['email'])){
+		$errors['email'] = 'emailを入力して下さい';
   }else{
-    echo '登録に失敗しました';
+    $email = $_POST['email'];
+  }
+  if(!isset($_POST['password']) || !mb_strlen($_POST['password'])){
+    $errors['password'] = 'passwordを入力してください';
+  }else{
+    $password = $_POST['password'];
+  }
+  if(count($errors) === 0){
+    try{
+      $stmt = $pdo -> prepare("SELECT * FROM members WHERE email = ? AND password = ?;");
+      $stmt->bindValue(1, $email);
+      $stmt->bindValue(2, $password);
+      $stmt->execute();
+      if($member = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $_SESSION['id'] = $member['id'];
+            header('Location: index.php ');
+      }else{
+        $errors['login_error'] = 'ログインすることができませんでした';
+      }
+    }catch(PDOException $e) {
+      $errors['insert'] =  '申し訳ございませんが、ログインできませんでした';//.$e->getMessage();
+    }
   }
 }
 ?>
@@ -33,9 +43,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   </head>
   <body>
 		<div class="page-header">
-  		<h1>ログイン <small>Subtext for header</small></h1>
+  		<h1>ログイン </h1>
 		</div>
     <div class="col-sm-offset-2">
+      <?php if (count($errors) > 0): ?>
+        <ul>
+          <?php foreach ($errors as $error): ?>
+            <li>
+              <?php echo htmlentities($error , ENT_QUOTES,'UTF-8'); ?>
+            </li>
+          <?php  endforeach; ?>
+        </ul>
+      <?php endif ?>
       <p>&raquo;<a href="regist_form.php">まだ会員登録をしていない場合</a></p>
       <p>メールアドレスとパスワードを記入してログインしてください。</p>
     </div>
@@ -54,7 +73,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
       </div>
   		<div class="form-group">
     		<div class="col-sm-offset-2 col-sm-8">
-      		<button type="submit" value="入力内容を確認する" class="btn btn-default">Sign in</button>
+      		<button type="submit" value="入力内容を確認する" class="btn btn-default">ログイン</button>
     		</div>
   		</div>
 		</form>

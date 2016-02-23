@@ -13,7 +13,7 @@ if(isset($_SESSION['id'])){
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Bootstrap 101 Template</title>
+    <title></title>
   </head>
   <body>
   </body>

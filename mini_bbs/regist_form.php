@@ -40,12 +40,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   } else {
   $password = $_POST['password'];
 	}
-	if(empty($errors)){
-		$_SESSION['name'] = $_POST['name'];
-		$_SESSION['email'] = $_POST['email'];
-		$_SESSION['password'] = $_POST['password'];
-  	header( 'Location: regist_confirm.php');
-  }
+	if(count($errors) === 0){
+		try{
+			$_SESSION['name'] = $_POST['name'];
+			$_SESSION['email'] = $_POST['email'];
+			$_SESSION['password'] = $_POST['password'];
+	  	header( 'Location: regist_confirm.php');
+		}catch(PDOException $e) {
+			$errors['insert_error'] = '会員登録することができません';
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -59,7 +63,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   </head>
   <body>
 		<div class="page-header">
-  		<h1>会員登録 <small>Subtext for header</small></h1>
+  		<h1>会員登録</h1>
 		</div>
     <?php if(count($errors) > 0): ?>
       <ul>
@@ -88,13 +92,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   		 <div class="form-group">
     		<label class="col-sm-2 control-label">パスワード</label>
     			<div class="col-sm-8">
-      			<input type="text" name="password" class="form-control"  placeholder="Password"
+      			<input type="password" name="password" class="form-control"  placeholder="Password"
             value="<?php echo htmlspecialchars($password,ENT_QUOTES, 'UTF-8');?>">
     			</div>
   		</div>
   		<div class="form-group">
     		<div class="col-sm-offset-2 col-sm-8">
-      		<button type="submit" value="入力内容を確認する" class="btn btn-default">Sign in</button>
+      		<button type="submit" value="入力内容を確認する" class="btn btn-default">確認</button>
     		</div>
   		</div>
 		</form>

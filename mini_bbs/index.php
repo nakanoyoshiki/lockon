@@ -21,14 +21,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	}else{
 		$message = $_POST['message'];
 	}
-	if(count($errors) ===0){
+	if(count($errors) === 0){
 		try{
 		  $stmt = $pdo -> prepare("INSERT INTO posts(member_id,message) VALUES (:member_id, :message)");
 			$stmt->bindValue(':member_id', $id, PDO::PARAM_INT);
 	 		$stmt->bindValue(':message', $message, PDO::PARAM_STR);
 	 		$stmt->execute();
 		}catch(PDOException $e) {
-			echo 'insertに失敗しました'.$e->getMessage();
+			$errors['insert'] =  '申し訳ございませんが、投稿できませんでした';//.$e->getMessage();
 		}
 	}
 }
@@ -44,11 +44,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
   </head>
   <body>
 		<div class="page-header">
-	  	<h1>掲示板 <small>Subtext for heade</small></h1>
+	  	<h1>掲示板</h1>
 			<?php if(!isset($_SESSION['id'])): ?>
 				<div class="pull-right"><a href ="login.php">ログイン</a></div>
 			<?php endif ?>
-			<div class="pull-right"><a href ="logout.php">ログアウト</a></div>
+			<div class="pull-right"><button type="button" class="btn pull-right">
+				<a href ="logout.php">ログアウト</a></button></div>
 		</div>
 		<form class="form-horizontal" id="frmInput" action="index.php" method="post" enctype="multipart/form-data">
 			<div class="form-group">

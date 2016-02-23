@@ -9,16 +9,16 @@
   </head>
   <body>
 		<div class="page-header">
-  		<h1>会員登録 <small>Subtext for header</small></h1>
+  		<h1>会員登録</h1>
 		</div>
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-8">
-        <p> 登録できました。</p>
+        <p> 登録できました。ありがとうございます。</p>
       </div>
     </div>
   	<div class="form-group">
     	<div class="col-sm-offset-2 col-sm-8">
-      	<button type="submit"  class="btn btn-default"><a href="../index.php">Sign in</a></button>
+      	<button type="submit"  class="btn btn-default"><a href="login.php">ログインする</a></button>
     	</div>
   	</div>
 

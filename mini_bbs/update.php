@@ -5,7 +5,7 @@ if(isset($_SESSION['id'])){
 	$id = $_REQUEST['id'];
 	$stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ?");
 	$stmt->execute(array($id));
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+	$message = $stmt->fetch(PDO::FETCH_ASSOC);
 	$errors = array();
 	if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$message = null;
@@ -18,7 +18,7 @@ if(isset($_SESSION['id'])){
 		}
 		if(count($errors) === 0){
     	$stmt = $pdo -> prepare("UPDATE posts SET message =? WHERE id = ?");
-    	$result = $stmt->execute(array($message, $id));
+    	$message = $stmt->execute(array($message, $id));
 			header('Location: index.php');
   	}
 	}
@@ -35,7 +35,7 @@ if(isset($_SESSION['id'])){
   </head>
   <body>
 		<div class="page-header">
-	  	<h1>掲示板 <small>Subtext for header</small></h1>
+	  	<h1>掲示板</h1>
 		</div>
 		<form class="form-horizontal" id="frmInput" action="" method="post" enctype="multipart/form-data">
 			<div class="form-group">
@@ -49,8 +49,7 @@ if(isset($_SESSION['id'])){
 							<?php  endforeach; ?>
 						</ul>
 					<?php endif ?>
-          <small><?php  print htmlspecialchars($result['id'], ENT_QUOTES,'UTF-8');?></small>
-					<input type="text" rows="5" name="message" class="form-control" id="message" value="<?php printf(htmlspecialchars($result['message'], ENT_QUOTES));?>">
+					<input type="text" rows="5" name="message" class="form-control" id="message" value="<?php printf(htmlspecialchars($message['message'], ENT_QUOTES));?>">
 				</div>
 			</div>
 	  	<div class="form-group">
