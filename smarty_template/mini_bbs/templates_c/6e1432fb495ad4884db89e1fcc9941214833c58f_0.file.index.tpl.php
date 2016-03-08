@@ -1,17 +1,17 @@
 <?php
-/* Smarty version 3.1.29, created on 2016-02-24 15:43:01
+/* Smarty version 3.1.29, created on 2016-03-08 08:18:41
   from "/Applications/MAMP/htdocs/lockon/smarty_template/mini_bbs/templates/index.tpl" */
 
 if ($_smarty_tpl->smarty->ext->_validateCompiled->decodeProperties($_smarty_tpl, array (
   'has_nocache_code' => false,
   'version' => '3.1.29',
-  'unifunc' => 'content_56cdc175b17d99_62390131',
+  'unifunc' => 'content_56de7cd1498db6_70240154',
   'file_dependency' => 
   array (
     '6e1432fb495ad4884db89e1fcc9941214833c58f' => 
     array (
       0 => '/Applications/MAMP/htdocs/lockon/smarty_template/mini_bbs/templates/index.tpl',
-      1 => 1456321312,
+      1 => 1457421519,
       2 => 'file',
     ),
   ),
@@ -19,7 +19,7 @@ if ($_smarty_tpl->smarty->ext->_validateCompiled->decodeProperties($_smarty_tpl,
   array (
   ),
 ),false)) {
-function content_56cdc175b17d99_62390131 ($_smarty_tpl) {
+function content_56de7cd1498db6_70240154 ($_smarty_tpl) {
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -113,8 +113,8 @@ echo $_smarty_tpl->tpl_vars['post']->value['member_id'];
 $_tmp2=ob_get_clean();
 if ($_smarty_tpl->tpl_vars['member']->value['id'] == $_tmp2) {?>
 							<button type="button" class="btn btn-danger btn-xs pull-right">
-								<a href="delete.php?id=<?php echo $_smarty_tpl->tpl_vars['post']->value['id'];?>
-" onclick="return confirm('削除していいですか？');">削除</a>
+									<a href="delete.php?id=<?php echo $_smarty_tpl->tpl_vars['post']->value['id'];?>
+">削除</a>
 							</button>
 							<button type="button" class="btn btn-warning btn-xs pull-right">
 								<a href="update.php?id=<?php echo $_smarty_tpl->tpl_vars['post']->value['id'];?>

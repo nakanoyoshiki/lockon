@@ -50,7 +50,7 @@
 					<div class="panel-body">
 						{if $member.id == {$post.member_id} }
 							<button type="button" class="btn btn-danger btn-xs pull-right">
-								<a href="delete.php?id={$post.id}" onclick="return confirm('削除していいですか？');">削除</a>
+									<a href="delete.php?id={$post.id}">削除</a>
 							</button>
 							<button type="button" class="btn btn-warning btn-xs pull-right">
 								<a href="update.php?id={$post.id}">編集</a>

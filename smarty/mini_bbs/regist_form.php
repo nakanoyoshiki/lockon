@@ -2,6 +2,7 @@
 ini_set( 'display_errors', 1 );
 require_once('Smarty/libs/Smarty.class.php');
 require('dbconnect.php');
+require('smarty.php');
 session_start();
 if(isset($_SESSION['id'])){
 	$id = $_SESSION['id'];

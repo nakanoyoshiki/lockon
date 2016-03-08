@@ -1,5 +1,6 @@
 <?php
 require('dbconnect.php');
+require('smarty.php');
 session_start();
 ini_set( 'display_errors', 1 );
 require_once('Smarty/libs/Smarty.class.php');
@@ -33,11 +34,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     }
   }
 }
-$smarty = new Smarty();
-$smarty->template_dir = '../../smarty_template/mini_bbs/templates/';
-$smarty->compile_dir = '../../smarty_template/mini_bbs/templates_c/';
-$smarty->config_dir = '../../smarty_template/mini_bbs/configs/';
-$smarty->cache_dir = '../../smarty_template/mini_bbs/cache/';
+
 $smarty->assign("title", "ログイン");
 $smarty->assign('errors', array(''));
 $smarty->assign('email', $email);

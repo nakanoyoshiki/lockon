@@ -1,7 +1,7 @@
 <?php
 ini_set( 'display_errors', 1 );
 require_once('Smarty/libs/Smarty.class.php');
-
+require('smarty.php');
 session_start();
 require('dbconnect.php');
 if(isset($_SESSION['id'])){
@@ -44,11 +44,6 @@ while($post  = $stsm -> fetch(PDO::FETCH_ASSOC)){
   $posts[] = $post;
 }
 
-$smarty = new Smarty();
-$smarty->template_dir = '../../smarty_template/mini_bbs/templates/';
-$smarty->compile_dir = '../../smarty_template/mini_bbs/templates_c/';
-$smarty->config_dir = '../../smarty_template/mini_bbs/configs/';
-$smarty->cache_dir = '../../smarty_template/mini_bbs/cache/';
 $smarty->assign("title", "掲示板");
 $smarty->assign('errors', $errors);
 $smarty->assign('posts', $posts);

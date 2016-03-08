@@ -1,8 +1,9 @@
 <?php
 ini_set( 'display_errors', 1 );
 require_once('Smarty/libs/Smarty.class.php');
-session_start();
 require('dbconnect.php');
+session_start();
+require('smarty.php');
 if(isset($_SESSION['id'])){
 	if(isset($_REQUEST['id'])){
 		$id = $_REQUEST['id'];
@@ -30,11 +31,6 @@ if(isset($_SESSION['id'])){
 }else{
 	header('Location: login.php');
 }
-$smarty = new Smarty();
-$smarty->template_dir = '../../smarty_template/mini_bbs/templates/';
-$smarty->compile_dir = '../../smarty_template/mini_bbs/templates_c/';
-$smarty->config_dir = '../../smarty_template/mini_bbs/configs/';
-$smarty->cache_dir = '../../smarty_template/mini_bbs/cache/';
 $smarty->assign("title", "掲示板");
 $smarty->assign('errors', $errors);
 $smarty->assign('message',$message);

@@ -32,7 +32,7 @@
       <div class="form-group">
         <label  class="col-sm-2 control-label">passsword</label>
         <div class="col-sm-8">
-          <input type="text" name="password" class="form-control"  value="{$password}">
+          <input type="password" name="password" class="form-control"  value="{$password}">
         </div>
       </div>
   		<div class="form-group">

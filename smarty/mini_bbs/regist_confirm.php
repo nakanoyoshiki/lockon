@@ -3,6 +3,7 @@ session_start();
 ini_set( 'display_errors', 1 );
 require_once('Smarty/libs/Smarty.class.php');
 require('dbconnect.php');
+require('smarty.php');
 $email = $password = $name ="";
 $name = $_SESSION['name'];
 $email = $_SESSION['email'];
@@ -44,11 +45,6 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
 		}
 	}
 }
-$smarty = new Smarty();
-$smarty->template_dir = '../../smarty_template/mini_bbs/templates/';
-$smarty->compile_dir = '../../smarty_template/mini_bbs/templates_c/';
-$smarty->config_dir = '../../smarty_template/mini_bbs/configs/';
-$smarty->cache_dir = '../../smarty_template/mini_bbs/cache/';
 $smarty->assign("title", "会員登録確認");
 $smarty->assign('errors', $errors);
 $smarty->assign("name",$name);
